@@ -1,203 +1,148 @@
-import { useEffect, useRef, useState } from 'react';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import { useEffect, useMemo } from 'react';
+import { MapContainer, TileLayer, CircleMarker, Tooltip, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 import { statesData, getAQIColor, State, City } from '@/data/pollutionData';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface IndiaMapProps {
-  onStateClick?: (state: State) => void;
+  onStateClick?: (state: State | null) => void;
   onCityClick?: (city: City) => void;
   selectedStateId?: string;
   className?: string;
 }
 
+// Component to handle map view changes
+function MapController({ selectedStateId }: { selectedStateId?: string }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (selectedStateId) {
+      const state = statesData.find(s => s.id === selectedStateId);
+      if (state) {
+        map.flyTo([state.coordinates[1], state.coordinates[0]], 7, { duration: 1.5 });
+      }
+    } else {
+      map.flyTo([22.5937, 78.9629], 4.5, { duration: 1.5 });
+    }
+  }, [selectedStateId, map]);
+  
+  return null;
+}
+
 export function IndiaMap({ onStateClick, onCityClick, selectedStateId, className }: IndiaMapProps) {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const markersRef = useRef<mapboxgl.Marker[]>([]);
-  const [mapboxToken, setMapboxToken] = useState<string>('');
-  const [isTokenSet, setIsTokenSet] = useState(false);
-  const [inputToken, setInputToken] = useState('');
-
-  const initializeMap = (token: string) => {
-    if (!mapContainer.current || map.current) return;
-
-    mapboxgl.accessToken = token;
-
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/dark-v11',
-      center: [78.9629, 22.5937], // Center of India
-      zoom: 4,
-      minZoom: 3,
-      maxZoom: 12,
-    });
-
-    map.current.addControl(
-      new mapboxgl.NavigationControl({ visualizePitch: false }),
-      'top-right'
-    );
-
-    map.current.on('load', () => {
-      addMarkers();
-    });
-  };
-
-  const addMarkers = () => {
-    if (!map.current) return;
-
-    // Clear existing markers
-    markersRef.current.forEach(marker => marker.remove());
-    markersRef.current = [];
-
-    const statesToShow = selectedStateId 
-      ? statesData.filter(s => s.id === selectedStateId)
-      : statesData;
-
-    statesToShow.forEach(state => {
-      if (selectedStateId) {
-        // Show cities when a state is selected
-        state.cities.forEach(city => {
-          const color = getAQIColor(city.category);
-          
-          const el = document.createElement('div');
-          el.className = 'city-marker';
-          el.innerHTML = `
-            <div class="relative cursor-pointer group">
-              <div class="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg transition-transform group-hover:scale-110" 
-                   style="background-color: ${color}; box-shadow: 0 0 15px ${color}80;">
-                ${city.aqi}
-              </div>
-              <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium text-white bg-black/70 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                ${city.name}
-              </div>
-            </div>
-          `;
-          
-          const marker = new mapboxgl.Marker(el)
-            .setLngLat(city.coordinates)
-            .addTo(map.current!);
-          
-          el.addEventListener('click', () => {
-            onCityClick?.(city);
-          });
-          
-          markersRef.current.push(marker);
-        });
-      } else {
-        // Show states
-        const color = getAQIColor(state.category);
-        
-        const el = document.createElement('div');
-        el.className = 'state-marker';
-        el.innerHTML = `
-          <div class="relative cursor-pointer group">
-            <div class="w-14 h-14 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-lg transition-transform group-hover:scale-110" 
-                 style="background-color: ${color}; box-shadow: 0 0 20px ${color}80;">
-              ${state.aqi}
-            </div>
-            <div class="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium text-white bg-black/70 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-              ${state.name}
-            </div>
-          </div>
-        `;
-        
-        const marker = new mapboxgl.Marker(el)
-          .setLngLat(state.coordinates)
-          .addTo(map.current!);
-        
-        el.addEventListener('click', () => {
-          onStateClick?.(state);
-          if (map.current) {
-            map.current.flyTo({
-              center: state.coordinates,
-              zoom: 7,
-              duration: 1500,
-            });
-          }
-        });
-        
-        markersRef.current.push(marker);
-      }
-    });
-  };
-
-  useEffect(() => {
-    if (isTokenSet && mapboxToken) {
-      initializeMap(mapboxToken);
-    }
-
-    return () => {
-      markersRef.current.forEach(marker => marker.remove());
-      map.current?.remove();
-      map.current = null;
-    };
-  }, [isTokenSet, mapboxToken]);
-
-  useEffect(() => {
-    if (map.current && map.current.isStyleLoaded()) {
-      addMarkers();
+  const markers = useMemo(() => {
+    if (selectedStateId) {
+      const state = statesData.find(s => s.id === selectedStateId);
+      if (!state) return [];
       
-      if (!selectedStateId && map.current) {
-        map.current.flyTo({
-          center: [78.9629, 22.5937],
-          zoom: 4,
-          duration: 1500,
-        });
-      }
+      return state.cities.map(city => ({
+        id: city.id,
+        name: city.name,
+        position: [city.coordinates[1], city.coordinates[0]] as [number, number],
+        aqi: city.aqi,
+        category: city.category,
+        color: getAQIColor(city.category),
+        isCity: true,
+        data: city,
+      }));
     }
+    
+    return statesData.map(state => ({
+      id: state.id,
+      name: state.name,
+      position: [state.coordinates[1], state.coordinates[0]] as [number, number],
+      aqi: state.aqi,
+      category: state.category,
+      color: getAQIColor(state.category),
+      isCity: false,
+      data: state,
+    }));
   }, [selectedStateId]);
 
-  const handleTokenSubmit = () => {
-    if (inputToken.trim()) {
-      setMapboxToken(inputToken.trim());
-      setIsTokenSet(true);
+  const handleMarkerClick = (marker: typeof markers[0]) => {
+    if (marker.isCity) {
+      onCityClick?.(marker.data as City);
+    } else {
+      onStateClick?.(marker.data as State);
     }
   };
-
-  if (!isTokenSet) {
-    return (
-      <div className={cn('flex flex-col items-center justify-center p-8 rounded-xl bg-card border border-border/50', className)}>
-        <div className="text-center max-w-md">
-          <h3 className="font-display font-semibold text-foreground mb-2">Mapbox Token Required</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            To display the interactive map, please enter your Mapbox public token. 
-            Get one free at{' '}
-            <a 
-              href="https://mapbox.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              mapbox.com
-            </a>
-          </p>
-          <div className="flex gap-2">
-            <Input
-              type="text"
-              placeholder="Enter Mapbox public token"
-              value={inputToken}
-              onChange={(e) => setInputToken(e.target.value)}
-              className="flex-1"
-              onKeyDown={(e) => e.key === 'Enter' && handleTokenSubmit()}
-            />
-            <Button onClick={handleTokenSubmit} disabled={!inputToken.trim()}>
-              Load Map
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={cn('relative rounded-xl overflow-hidden', className)}>
-      <div ref={mapContainer} className="w-full h-full min-h-[400px]" />
+      <MapContainer
+        center={[22.5937, 78.9629]}
+        zoom={4.5}
+        minZoom={3}
+        maxZoom={12}
+        className="w-full h-full min-h-[400px] bg-background"
+        style={{ background: 'hsl(var(--background))' }}
+        scrollWheelZoom={true}
+        zoomControl={true}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        />
+        
+        <MapController selectedStateId={selectedStateId} />
+        
+        {markers.map((marker) => (
+          <CircleMarker
+            key={marker.id}
+            center={marker.position}
+            radius={marker.isCity ? 12 : 18}
+            pathOptions={{
+              fillColor: marker.color,
+              fillOpacity: 0.85,
+              color: marker.color,
+              weight: 2,
+              opacity: 1,
+            }}
+            eventHandlers={{
+              click: () => handleMarkerClick(marker),
+            }}
+          >
+            <Tooltip 
+              direction="top" 
+              offset={[0, -10]} 
+              opacity={0.95}
+              className="custom-tooltip"
+            >
+              <div className="text-center font-sans">
+                <div className="font-semibold text-sm">{marker.name}</div>
+                <div className="text-xs mt-1">
+                  AQI: <span className="font-bold" style={{ color: marker.color }}>{marker.aqi}</span>
+                </div>
+                <div className="text-xs opacity-80 capitalize">{marker.category.replace('-', ' ')}</div>
+              </div>
+            </Tooltip>
+          </CircleMarker>
+        ))}
+        
+        {/* AQI Value Labels on markers */}
+        {markers.map((marker) => (
+          <CircleMarker
+            key={`label-${marker.id}`}
+            center={marker.position}
+            radius={0}
+            pathOptions={{ opacity: 0, fillOpacity: 0 }}
+          >
+            <Tooltip 
+              permanent 
+              direction="center"
+              className="aqi-label-tooltip"
+            >
+              <span className="font-bold text-white text-xs cursor-pointer" onClick={() => handleMarkerClick(marker)}>
+                {marker.aqi}
+              </span>
+            </Tooltip>
+          </CircleMarker>
+        ))}
+      </MapContainer>
       
       {/* AQI Legend */}
-      <div className="absolute bottom-4 left-4 bg-card/90 backdrop-blur-sm border border-border/50 rounded-lg p-3">
+      <div className="absolute bottom-4 left-4 bg-card/90 backdrop-blur-sm border border-border/50 rounded-lg p-3 z-[1000]">
         <p className="text-xs font-medium text-muted-foreground mb-2">AQI Scale (CPCB)</p>
         <div className="flex gap-1">
           {[
@@ -222,10 +167,8 @@ export function IndiaMap({ onStateClick, onCityClick, selectedStateId, className
         <Button
           variant="secondary"
           size="sm"
-          className="absolute top-4 left-4"
-          onClick={() => {
-            onStateClick?.(undefined as any);
-          }}
+          className="absolute top-4 left-4 z-[1000]"
+          onClick={() => onStateClick?.(null)}
         >
           ← Back to India
         </Button>
