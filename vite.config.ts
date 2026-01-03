@@ -1,18 +1,16 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  // 🔴 REQUIRED for GitHub Pages
+  // REQUIRED for GitHub Pages
   base: "/VayuWatch/",
 
   plugins: [
     react(),
-    // Lovable tagger ONLY in dev (safe)
-    mode === "development"
-      ? (await import("lovable-tagger")).componentTagger()
-      : undefined,
+    mode === "development" && componentTagger(),
   ].filter(Boolean),
 
   resolve: {
