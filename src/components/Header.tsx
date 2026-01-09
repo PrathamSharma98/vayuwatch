@@ -1,8 +1,11 @@
 import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Wind, Map, BarChart3, AlertCircle, FileText, Menu, X } from 'lucide-react';
+import { Wind, Map, BarChart3, AlertCircle, FileText, Menu, X, User, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { NotificationCenter } from '@/components/NotificationCenter';
+import { Button } from '@/components/ui/button';
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: BarChart3 },
@@ -14,6 +17,7 @@ const navItems = [
 export function Header() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
@@ -63,13 +67,36 @@ export function Header() {
             })}
           </nav>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2 text-muted-foreground hover:text-foreground"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          {/* Right Section */}
+          <div className="flex items-center gap-2">
+            <NotificationCenter />
+            
+            {isAuthenticated ? (
+              <div className="hidden md:flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  {user?.name || user?.phone}
+                </span>
+                <Button size="sm" variant="ghost" onClick={logout}>
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            ) : (
+              <Link to="/login" className="hidden md:block">
+                <Button size="sm" variant="secondary">
+                  <User className="w-4 h-4 mr-1" />
+                  Login
+                </Button>
+              </Link>
+            )}
+
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden p-2 text-muted-foreground hover:text-foreground"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation */}
@@ -100,6 +127,16 @@ export function Header() {
                 </Link>
               );
             })}
+            {!isAuthenticated && (
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-primary"
+              >
+                <User className="w-5 h-5" />
+                Login / Sign Up
+              </Link>
+            )}
           </motion.nav>
         )}
       </div>

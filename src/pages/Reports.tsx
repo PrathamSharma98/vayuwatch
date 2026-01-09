@@ -1,19 +1,58 @@
 import { motion } from 'framer-motion';
-import { FileText, Download, Calendar, MapPin } from 'lucide-react';
+import { FileText, Download, Calendar, MapPin, Loader2 } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { statesData, getAllCities, getAQILabel } from '@/data/pollutionData';
 import { toast } from '@/hooks/use-toast';
+import { useState } from 'react';
+import { 
+  generateNationalPDF, 
+  generateStatePDF, 
+  generateCityPDF,
+  generateNationalCSV 
+} from '@/utils/reportGenerator';
+import { useLiveAQI } from '@/hooks/useLiveAQI';
 
 const Reports = () => {
-  const allCities = getAllCities();
+  const { states, getNationalStats } = useLiveAQI();
+  const allCities = states.flatMap(s => s.cities);
+  const [loadingReport, setLoadingReport] = useState<string | null>(null);
 
-  const handleDownload = (type: string, name: string) => {
-    toast({
-      title: 'Download Started',
-      description: `Generating ${type} report for ${name}...`,
-    });
-    // In a real app, this would trigger actual file download
+  const handleDownload = async (type: 'pdf' | 'csv', target: 'national' | 'state' | 'city', id?: string) => {
+    const key = `${type}-${target}-${id || 'all'}`;
+    setLoadingReport(key);
+    
+    // Small delay for UI feedback
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    try {
+      if (target === 'national') {
+        if (type === 'pdf') {
+          generateNationalPDF(states, getNationalStats());
+        } else {
+          generateNationalCSV(states);
+        }
+      } else if (target === 'state' && id) {
+        const state = states.find(s => s.id === id);
+        if (state) generateStatePDF(state);
+      } else if (target === 'city' && id) {
+        const city = allCities.find(c => c.id === id);
+        if (city) generateCityPDF(city);
+      }
+
+      toast({
+        title: '✓ Report Downloaded',
+        description: `Your ${type.toUpperCase()} report has been generated.`,
+      });
+    } catch (error) {
+      toast({
+        title: 'Download Failed',
+        description: 'Unable to generate report. Please try again.',
+        variant: 'destructive',
+      });
+    }
+
+    setLoadingReport(null);
   };
 
   return (
@@ -60,19 +99,21 @@ const Reports = () => {
             <div className="flex gap-2">
               <Button 
                 size="sm" 
-                onClick={() => handleDownload('PDF', 'India')}
+                onClick={() => handleDownload('pdf', 'national')}
+                disabled={loadingReport === 'pdf-national-all'}
                 className="flex items-center gap-1"
               >
-                <Download className="w-4 h-4" />
+                {loadingReport === 'pdf-national-all' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
                 PDF
               </Button>
               <Button 
                 size="sm" 
                 variant="secondary"
-                onClick={() => handleDownload('CSV', 'India')}
+                onClick={() => handleDownload('csv', 'national')}
+                disabled={loadingReport === 'csv-national-all'}
                 className="flex items-center gap-1"
               >
-                <Download className="w-4 h-4" />
+                {loadingReport === 'csv-national-all' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
                 CSV
               </Button>
             </div>
