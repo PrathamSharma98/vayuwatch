@@ -5,7 +5,9 @@ import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { NotificationCenter } from '@/components/NotificationCenter';
+import { GlobalSearch } from '@/components/GlobalSearch';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: BarChart3 },
@@ -43,8 +45,18 @@ export function Header() {
             </div>
           </Link>
 
+          {/* Demo Badge */}
+          <Badge variant="outline" className="hidden sm:flex bg-warning/10 text-warning border-warning/30 text-xs">
+            🎯 Hackathon Demo
+          </Badge>
+
+          {/* Global Search */}
+          <div className="hidden md:block flex-1 max-w-md mx-4">
+            <GlobalSearch />
+          </div>
+
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
               const Icon = item.icon;
@@ -54,7 +66,7 @@ export function Header() {
                   key={item.path}
                   to={item.path}
                   className={cn(
-                    'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                    'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                     isActive
                       ? 'bg-primary/10 text-primary'
                       : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'

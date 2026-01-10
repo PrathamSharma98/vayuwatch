@@ -7,7 +7,6 @@ import {
   AlertTriangle, 
   Activity,
   Building2,
-  Users,
   ThermometerSun
 } from 'lucide-react';
 import { Header } from '@/components/Header';
@@ -19,18 +18,19 @@ import { AQIScaleLegend } from '@/components/AQIScaleLegend';
 import { SourceBreakdown } from '@/components/SourceBreakdown';
 import { LiveIndicator } from '@/components/LiveIndicator';
 import { AQIBadge } from '@/components/AQIBadge';
-import { 
-  statesData, 
-  getTopPollutedCities, 
-  getNationalStats,
-  State,
-  City
-} from '@/data/pollutionData';
+import { LocationAQICard } from '@/components/LocationAQICard';
+import { LiveSimulatedBadge } from '@/components/LiveSimulatedBadge';
+import { useLiveAQI } from '@/hooks/useLiveAQI';
+import { useAuth } from '@/contexts/AuthContext';
+import { State, City } from '@/data/pollutionData';
 import { useNavigate } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
 
 const Index = () => {
   const navigate = useNavigate();
   const [selectedState, setSelectedState] = useState<State | null>(null);
+  const { isAuthenticated } = useAuth();
+  const { states, lastUpdated, getNationalStats, getTopPollutedCities } = useLiveAQI();
   const nationalStats = getNationalStats();
   const topPollutedCities = getTopPollutedCities(5);
 
@@ -47,6 +47,30 @@ const Index = () => {
       <Header />
       
       <main className="container mx-auto px-4 py-6">
+        {/* Demo Mode Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 p-3 rounded-lg bg-warning/10 border border-warning/30 flex items-center justify-between"
+        >
+          <div className="flex items-center gap-2">
+            <Badge className="bg-warning text-warning-foreground">DEMO MODE</Badge>
+            <span className="text-sm text-warning">Hackathon Edition - Data is simulated for demonstration</span>
+          </div>
+          <LiveSimulatedBadge lastUpdated={lastUpdated} />
+        </motion.div>
+
+        {/* Location-based AQI Card (shown after login) */}
+        {isAuthenticated && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6"
+          >
+            <LocationAQICard onCityClick={(cityId) => navigate(`/city/${cityId}`)} />
+          </motion.div>
+        )}
+
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -196,7 +220,7 @@ const Index = () => {
               <h2 className="font-display font-semibold text-foreground">State-wise AQI</h2>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              {statesData.slice(0, 8).map((state, index) => (
+              {states.slice(0, 8).map((state, index) => (
                 <motion.button
                   key={state.id}
                   initial={{ opacity: 0, y: 10 }}
