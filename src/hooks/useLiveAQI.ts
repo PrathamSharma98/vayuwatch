@@ -76,7 +76,7 @@ function generateLiveData(): State[] {
   });
 }
 
-export function useLiveAQI(refreshInterval: number = 180000) { // Default 3 minutes
+export function useLiveAQI(refreshInterval: number = 7000) { // Default 7 seconds for hackathon demo
   const [data, setData] = useState<LiveAQIData>({
     states: statesData,
     lastUpdated: new Date(),
