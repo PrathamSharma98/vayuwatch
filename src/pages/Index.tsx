@@ -47,18 +47,32 @@ const Index = () => {
       <Header />
       
       <main className="container mx-auto px-4 py-6">
-        {/* Demo Mode Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-4 p-3 rounded-lg bg-warning/10 border border-warning/30 flex items-center justify-between"
-        >
-          <div className="flex items-center gap-2">
-            <Badge className="bg-warning text-warning-foreground">DEMO MODE</Badge>
-            <span className="text-sm text-warning">Beta Version 1.0 – Data is simulated for demonstration</span>
-          </div>
-          <LiveSimulatedBadge lastUpdated={lastUpdated} />
-        </motion.div>
+      {/* Demo Mode Banner */}
+<motion.div
+  initial={{ opacity: 0, y: -10 }}
+  animate={{ opacity: 1, y: 0 }}
+  className="mb-4 rounded-lg bg-warning/10 border border-warning/30 p-3"
+>
+  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+    
+    {/* Left */}
+    <div className="flex items-center gap-2 flex-wrap">
+      <Badge className="bg-warning text-warning-foreground text-xs">
+        DEMO MODE
+      </Badge>
+      <span className="text-xs sm:text-sm text-warning">
+        Beta Version 1.0 – Data is simulated for demonstration
+      </span>
+    </div>
+
+    {/* Right */}
+    <div className="flex items-center">
+      <LiveSimulatedBadge lastUpdated={lastUpdated} />
+    </div>
+
+  </div>
+</motion.div>
+
 
         {/* Location-based AQI Card (shown after login) */}
         {isAuthenticated && (
