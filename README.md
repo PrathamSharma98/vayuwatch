@@ -1,91 +1,82 @@
-Project Setup & Development Guide
-Project Overview
+# 🌬️ VayuWatch  
+### Real-Time Air Quality Intelligence for India *(Simulated Live Data)*
 
-This repository contains a modern web application built using a fast, scalable frontend stack.
-The codebase supports local development, version control, and easy deployment.
+VayuWatch is a modern, India-focused air quality monitoring and decision-support platform.  
+It transforms raw AQI values into **clear insights, health guidance, and policy-ready signals** for citizens and authorities.
 
-How to Edit the Code
+Designed to feel **live, transparent, and production-grade** — even while using simulated data.
 
-You can edit and maintain this project using any of the following approaches:
+---
 
-Option 1: Use Your Preferred IDE (Local Development)
-Prerequisites
+## 🚀 Key Features
 
-Node.js (recommended via nvm)
+### 🧠 Intelligent AQI Insights
+- Plain-language translation of AQI into daily-life impact
+- “What changed since yesterday?” explanations
+- Composite **Pollution Risk Index** (Low / Medium / High)
+- Vulnerable population exposure estimation
 
-npm
+---
 
-Setup Steps
-# Clone the repository
-git clone <YOUR_GIT_URL>
+### 🗺️ Map & Discovery
+- India-wide AQI heatmap
+- Adjustable density:
+  - **Sparse** (city-level)
+  - **Medium** (ward clusters)
+  - **Dense** (stations)
+- **Clean Air Escape Mode** to find nearby cleaner areas
+- Ward-level risk ranking
 
-# Navigate to the project directory
-cd <YOUR_PROJECT_NAME>
+---
 
-# Install dependencies
-npm install
+### 🔔 Alerts & Safety
+- Smart alerts with clear reasoning
+- Auto-generated safety checklist:
+  - Mask guidance
+  - Outdoor activity advice
+  - Ventilation tips
+- Tap any AQI value to **Explain This AQI**
 
-# Start the development server
+---
+
+### 🏛️ Governance & Policy Support
+- GRAP-inspired authority action suggestions
+- City vs **NCAP target** comparison
+- Dashboard suitable for public communication and policy review
+
+---
+
+### ⚡ Live Experience *(Simulated)*
+- Auto-refreshing AQI every **6–7 seconds**
+- Consistent live updates across:
+  - Dashboard
+  - City views
+  - Ward views
+  - Maps
+- Live-synced PDF reports with timestamps
+
+---
+
+## 🧪 Data Transparency
+> ⚠️ All air quality data shown in VayuWatch is **simulated or derived** for demonstration purposes.
+
+- No external APIs
+- No API keys or tokens
+- No paid services
+- Clear confidence indicators displayed
+
+---
+
+## 🛠️ Technology Stack
+- **Vite**
+- **React**
+- **TypeScript**
+- **Tailwind CSS**
+- **shadcn/ui**
+
+---
+
+## ▶️ Start the Development Server
+
+```bash
 npm run dev
-
-
-This starts a local development server with hot reloading and instant preview.
-
-Option 2: Edit Directly on GitHub
-
-Open the repository on GitHub
-
-Navigate to the file you want to edit
-
-Click the Edit (✏️) icon
-
-Make changes and commit them
-
-Option 3: Use GitHub Codespaces
-
-Open the repository main page
-
-Click Code → Codespaces → New codespace
-
-Edit files in the browser-based environment
-
-Commit and push changes when done
-
-Technology Stack
-
-This project uses:
-
-Vite – fast build and dev server
-
-TypeScript – type-safe development
-
-React – component-based UI
-
-shadcn/ui – modern UI components
-
-Tailwind CSS – utility-first styling
-
-Deployment
-
-The application can be built and deployed using standard Vite workflows.
-
-Typical steps:
-
-npm run build
-
-
-The generated production build can be hosted on any static hosting or server platform that supports modern JavaScript applications.
-
-Custom Domain Support
-
-If deployed on a platform that supports custom domains, DNS-based domain configuration can be used to attach a custom URL.
-
-Refer to your hosting provider’s documentation for domain setup steps.
-
-Notes
-
-No authentication, payments, or external paid services are required
-
-Designed to be lightweight, fast, and demo-ready
-
-Suitable for dashboards, public-facing tools, and decision-support systems
