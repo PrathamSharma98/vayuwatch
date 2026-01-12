@@ -2,62 +2,65 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
-
-/* VayuWatch Design System - India Pollution Monitoring Dashboard */
+/* VayuWatch Enterprise Design System - Government-Grade Dashboard */
 
 @layer base {
   :root {
-    /* Core backgrounds - Dark theme for data dashboard */
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
+    /* Core backgrounds - Deep near-black with subtle blue undertones */
+    --background: 220 20% 4%;
+    --foreground: 210 20% 95%;
 
-    --card: 222 47% 8%;
-    --card-foreground: 210 40% 98%;
+    --card: 220 18% 7%;
+    --card-foreground: 210 20% 95%;
 
-    --popover: 222 47% 10%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 220 18% 8%;
+    --popover-foreground: 210 20% 95%;
 
-    /* Primary - Deep teal/cyan for tech feel */
-    --primary: 187 72% 45%;
-    --primary-foreground: 222 47% 6%;
+    /* Primary - Deep teal/cyan gradient base */
+    --primary: 175 65% 42%;
+    --primary-foreground: 220 20% 4%;
+    --primary-glow: 175 80% 50%;
 
-    /* Secondary - Muted slate */
-    --secondary: 217 19% 18%;
-    --secondary-foreground: 210 40% 90%;
+    /* Secondary - Slate with cyan undertone */
+    --secondary: 215 20% 12%;
+    --secondary-foreground: 210 20% 85%;
 
-    --muted: 217 19% 14%;
-    --muted-foreground: 215 20% 55%;
+    --muted: 215 18% 10%;
+    --muted-foreground: 215 15% 50%;
 
-    --accent: 187 72% 35%;
-    --accent-foreground: 210 40% 98%;
+    /* Accent - Soft amber for highlights and alerts */
+    --accent: 38 92% 55%;
+    --accent-foreground: 220 20% 4%;
+    
+    /* Electric blue for interactive elements */
+    --accent-blue: 210 100% 60%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 20% 95%;
 
-    --border: 217 19% 20%;
-    --input: 217 19% 20%;
-    --ring: 187 72% 45%;
+    --border: 215 18% 14%;
+    --input: 215 18% 14%;
+    --ring: 175 65% 42%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    /* AQI Colors - Indian CPCB Standards */
-    --aqi-good: 142 76% 36%;
-    --aqi-satisfactory: 84 60% 50%;
-    --aqi-moderate: 45 93% 47%;
-    --aqi-poor: 28 87% 55%;
-    --aqi-very-poor: 0 84% 50%;
-    --aqi-severe: 0 84% 28%;
+    /* AQI Colors - Indian CPCB Standards (desaturated for professional look) */
+    --aqi-good: 145 55% 38%;
+    --aqi-satisfactory: 78 45% 45%;
+    --aqi-moderate: 42 75% 48%;
+    --aqi-poor: 25 70% 50%;
+    --aqi-very-poor: 0 65% 48%;
+    --aqi-severe: 0 60% 32%;
 
     /* Semantic colors */
-    --success: 142 76% 36%;
-    --warning: 45 93% 47%;
-    --danger: 0 84% 50%;
-    --info: 199 89% 48%;
+    --success: 145 55% 38%;
+    --warning: 38 92% 55%;
+    --danger: 0 72% 51%;
+    --info: 210 100% 60%;
 
     /* Gradients */
-    --gradient-dark: linear-gradient(180deg, hsl(222, 47%, 8%) 0%, hsl(222, 47%, 4%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(222, 47%, 10%) 0%, hsl(222, 47%, 7%) 100%);
+    --gradient-dark: linear-gradient(180deg, hsl(220, 20%, 6%) 0%, hsl(220, 20%, 3%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(220, 18%, 8%) 0%, hsl(220, 18%, 5%) 100%);
     --gradient-aqi: linear-gradient(90deg, 
       hsl(var(--aqi-good)) 0%, 
       hsl(var(--aqi-satisfactory)) 20%, 
@@ -66,50 +69,54 @@
       hsl(var(--aqi-very-poor)) 80%, 
       hsl(var(--aqi-severe)) 100%
     );
-    --gradient-primary: linear-gradient(135deg, hsl(187, 72%, 50%) 0%, hsl(187, 72%, 35%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(175, 65%, 48%) 0%, hsl(175, 65%, 35%) 100%);
+    --gradient-sidebar: linear-gradient(180deg, hsl(220, 20%, 5%) 0%, hsl(220, 20%, 3%) 100%);
+    --gradient-glow: radial-gradient(ellipse at center, hsl(175, 65%, 42% / 0.15) 0%, transparent 70%);
 
     /* Shadows */
-    --shadow-sm: 0 2px 8px hsl(222, 47%, 3% / 0.4);
-    --shadow-md: 0 4px 16px hsl(222, 47%, 3% / 0.5);
-    --shadow-lg: 0 8px 32px hsl(222, 47%, 3% / 0.6);
-    --shadow-glow: 0 0 20px hsl(187, 72%, 45% / 0.3);
-    --shadow-aqi-good: 0 0 20px hsl(var(--aqi-good) / 0.4);
-    --shadow-aqi-poor: 0 0 20px hsl(var(--aqi-poor) / 0.4);
-    --shadow-aqi-severe: 0 0 20px hsl(var(--aqi-severe) / 0.5);
+    --shadow-sm: 0 1px 2px hsl(220, 20%, 2% / 0.5);
+    --shadow-md: 0 4px 12px hsl(220, 20%, 2% / 0.6);
+    --shadow-lg: 0 8px 24px hsl(220, 20%, 2% / 0.7);
+    --shadow-glow: 0 0 30px hsl(175, 65%, 42% / 0.2);
+    --shadow-glow-accent: 0 0 30px hsl(38, 92%, 55% / 0.2);
+    --shadow-aqi-good: 0 0 16px hsl(var(--aqi-good) / 0.3);
+    --shadow-aqi-poor: 0 0 16px hsl(var(--aqi-poor) / 0.3);
+    --shadow-aqi-severe: 0 0 16px hsl(var(--aqi-severe) / 0.4);
 
     /* Typography */
-    --font-display: 'Poppins', sans-serif;
-    --font-body: 'Inter', sans-serif;
+    --font-display: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
 
     /* Sidebar */
-    --sidebar-background: 222 47% 7%;
-    --sidebar-foreground: 210 40% 90%;
-    --sidebar-primary: 187 72% 45%;
-    --sidebar-primary-foreground: 222 47% 6%;
-    --sidebar-accent: 217 19% 15%;
-    --sidebar-accent-foreground: 210 40% 90%;
-    --sidebar-border: 217 19% 18%;
-    --sidebar-ring: 187 72% 45%;
+    --sidebar-background: 220 20% 4%;
+    --sidebar-foreground: 210 20% 85%;
+    --sidebar-primary: 175 65% 42%;
+    --sidebar-primary-foreground: 220 20% 4%;
+    --sidebar-accent: 215 18% 10%;
+    --sidebar-accent-foreground: 210 20% 90%;
+    --sidebar-border: 215 18% 12%;
+    --sidebar-ring: 175 65% 42%;
   }
 
   .light {
-    --background: 0 0% 98%;
-    --foreground: 222 47% 11%;
+    --background: 210 20% 98%;
+    --foreground: 220 20% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 220 20% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 187 72% 40%;
+    --popover-foreground: 220 20% 10%;
+    --primary: 175 65% 38%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 94%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 187 72% 95%;
-    --accent-foreground: 187 72% 30%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 187 72% 40%;
+    --secondary: 210 20% 95%;
+    --secondary-foreground: 220 20% 10%;
+    --muted: 210 20% 92%;
+    --muted-foreground: 215 15% 45%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 220 20% 10%;
+    --border: 214 20% 88%;
+    --input: 214 20% 88%;
+    --ring: 175 65% 38%;
   }
 }
 
@@ -125,50 +132,72 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-body);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     @apply font-semibold tracking-tight;
+    letter-spacing: -0.02em;
+  }
+
+  /* Monospace for data */
+  .font-mono {
+    font-family: var(--font-mono);
   }
 }
 
 @layer components {
   /* AQI Badge variants */
   .aqi-badge-good {
-    @apply bg-aqi-good/20 text-aqi-good border border-aqi-good/30;
+    @apply bg-aqi-good/15 text-aqi-good border border-aqi-good/25;
   }
   
   .aqi-badge-satisfactory {
-    @apply bg-aqi-satisfactory/20 text-aqi-satisfactory border border-aqi-satisfactory/30;
+    @apply bg-aqi-satisfactory/15 text-aqi-satisfactory border border-aqi-satisfactory/25;
   }
   
   .aqi-badge-moderate {
-    @apply bg-aqi-moderate/20 text-aqi-moderate border border-aqi-moderate/30;
+    @apply bg-aqi-moderate/15 text-aqi-moderate border border-aqi-moderate/25;
   }
   
   .aqi-badge-poor {
-    @apply bg-aqi-poor/20 text-aqi-poor border border-aqi-poor/30;
+    @apply bg-aqi-poor/15 text-aqi-poor border border-aqi-poor/25;
   }
   
   .aqi-badge-very-poor {
-    @apply bg-aqi-very-poor/20 text-aqi-very-poor border border-aqi-very-poor/30;
+    @apply bg-aqi-very-poor/15 text-aqi-very-poor border border-aqi-very-poor/25;
   }
   
   .aqi-badge-severe {
-    @apply bg-aqi-severe/20 text-aqi-severe border border-aqi-severe/30;
+    @apply bg-aqi-severe/15 text-aqi-severe border border-aqi-severe/25;
   }
 
-  /* Glass effect cards */
+  /* Glass effect cards - subtle glassmorphism */
   .glass-card {
-    @apply bg-card/60 backdrop-blur-xl border border-border/50;
+    @apply bg-card/80 backdrop-blur-md border border-border/40;
     box-shadow: var(--shadow-md);
+  }
+
+  /* Widget card - modular dashboard widgets */
+  .widget-card {
+    @apply bg-gradient-to-br from-card to-card/80 border border-border/40 rounded-lg;
+    box-shadow: var(--shadow-sm);
   }
 
   /* Gradient text */
   .gradient-text {
     @apply bg-clip-text text-transparent;
     background-image: var(--gradient-primary);
+  }
+
+  /* Glow effect */
+  .glow-primary {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .glow-accent {
+    box-shadow: var(--shadow-glow-accent);
   }
 
   /* Pulse animation for live data */
@@ -186,11 +215,26 @@
   .map-container {
     @apply w-full h-full rounded-lg overflow-hidden;
   }
+
+  /* Sidebar navigation */
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200;
+    @apply text-muted-foreground hover:text-foreground hover:bg-secondary/60;
+  }
+
+  .nav-item-active {
+    @apply text-primary bg-primary/10 border-l-2 border-primary -ml-px pl-[calc(0.75rem+1px)];
+  }
+
+  /* Thin dividers */
+  .divider-thin {
+    @apply h-px bg-gradient-to-r from-transparent via-border to-transparent;
+  }
 }
 
 /* Leaflet Map Styling */
 .leaflet-container {
-  background-color: hsl(222, 47%, 6%) !important;
+  background-color: hsl(220, 20%, 4%) !important;
   font-family: var(--font-body);
 }
 
@@ -200,40 +244,40 @@
 }
 
 .leaflet-control-zoom a {
-  background-color: hsl(222, 47%, 10%) !important;
-  color: hsl(210, 40%, 98%) !important;
-  border: 1px solid hsl(217, 19%, 20%) !important;
+  background-color: hsl(220, 18%, 8%) !important;
+  color: hsl(210, 20%, 95%) !important;
+  border: 1px solid hsl(215, 18%, 14%) !important;
 }
 
 .leaflet-control-zoom a:hover {
-  background-color: hsl(217, 19%, 18%) !important;
+  background-color: hsl(215, 18%, 12%) !important;
 }
 
 .leaflet-control-attribution {
-  background-color: hsl(222, 47%, 8% / 0.8) !important;
-  color: hsl(215, 20%, 55%) !important;
+  background-color: hsl(220, 20%, 6% / 0.9) !important;
+  color: hsl(215, 15%, 50%) !important;
   font-size: 10px !important;
 }
 
 .leaflet-control-attribution a {
-  color: hsl(187, 72%, 45%) !important;
+  color: hsl(175, 65%, 42%) !important;
 }
 
 /* Custom tooltip styles */
 .leaflet-tooltip {
-  background-color: hsl(222, 47%, 10%) !important;
-  border: 1px solid hsl(217, 19%, 25%) !important;
-  border-radius: 8px !important;
-  box-shadow: 0 4px 16px hsl(222, 47%, 3% / 0.6) !important;
+  background-color: hsl(220, 18%, 8%) !important;
+  border: 1px solid hsl(215, 18%, 18%) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 12px hsl(220, 20%, 2% / 0.7) !important;
   padding: 8px 12px !important;
-  color: hsl(210, 40%, 98%) !important;
+  color: hsl(210, 20%, 95%) !important;
 }
 
 .leaflet-tooltip::before {
-  border-top-color: hsl(222, 47%, 10%) !important;
+  border-top-color: hsl(220, 18%, 8%) !important;
 }
 
-/* AQI label tooltip - transparent background for marker labels */
+/* AQI label tooltip */
 .aqi-label-tooltip {
   background: transparent !important;
   border: none !important;
@@ -247,20 +291,20 @@
 
 /* Circle marker hover effect */
 .leaflet-interactive:hover {
-  filter: brightness(1.2);
+  filter: brightness(1.15);
   cursor: pointer;
 }
 
 @layer utilities {
-  /* Custom scrollbar */
+  /* Custom scrollbar - thin and subtle */
   .scrollbar-thin {
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--muted)) transparent;
   }
 
   .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
 
   .scrollbar-thin::-webkit-scrollbar-track {
@@ -268,12 +312,22 @@
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: hsl(var(--muted));
-    border-radius: 3px;
+    background: hsl(var(--border));
+    border-radius: 2px;
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground));
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -283,7 +337,7 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.5;
+    opacity: 0.4;
   }
 }
 
@@ -292,23 +346,23 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-6px);
   }
 }
 
 @keyframes glow {
   0%, 100% {
-    box-shadow: 0 0 5px hsl(var(--primary) / 0.5);
+    box-shadow: 0 0 8px hsl(var(--primary) / 0.4);
   }
   50% {
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.8);
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.6);
   }
 }
 
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -328,10 +382,15 @@
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale(0.95);
   }
   to {
     opacity: 1;
     transform: scale(1);
   }
+}
+
+/* Subtle gradient background effect */
+.bg-gradient-radial {
+  background-image: var(--gradient-glow);
 }

@@ -5,15 +5,15 @@ import {
   MapPin, 
   Users, 
   Ruler,
-  Clock,
   Wind,
   Factory,
   TreePine,
   Car,
   Bus,
-  Lightbulb
+  Lightbulb,
+  ChevronRight
 } from 'lucide-react';
-import { Header } from '@/components/Header';
+import { DashboardLayout } from '@/components/DashboardLayout';
 import { AQIGauge } from '@/components/AQIGauge';
 import { AQIBadge } from '@/components/AQIBadge';
 import { PollutantCard } from '@/components/PollutantCard';
@@ -30,21 +30,19 @@ const WardDetail = () => {
 
   if (!result) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-display font-bold text-foreground mb-4">Ward Not Found</h1>
-          <p className="text-muted-foreground mb-6">The ward you're looking for doesn't exist.</p>
-          <Button onClick={() => navigate('/')}>Back to Dashboard</Button>
+      <DashboardLayout>
+        <div className="p-6 text-center py-20">
+          <h1 className="text-xl font-display font-bold text-foreground mb-3">Ward Not Found</h1>
+          <p className="text-sm text-muted-foreground mb-5">The ward you're looking for doesn't exist.</p>
+          <Button onClick={() => navigate('/')} size="sm">Back to Dashboard</Button>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   const { ward, city, state } = result;
   const color = getAQIColor(ward.category);
 
-  // Pollutant limits (CPCB standards)
   const pollutantLimits = {
     pm25: 60,
     pm10: 100,
@@ -54,7 +52,6 @@ const WardDetail = () => {
     o3: 180,
   };
 
-  // Ward-specific recommendations based on dominant source
   const getRecommendations = () => {
     const baseRecs = [
       { icon: TreePine, text: 'Plant more trees and create green buffers along roads' },
@@ -89,160 +86,132 @@ const WardDetail = () => {
   const recommendations = getRecommendations();
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      
-      <main className="container mx-auto px-4 py-6">
+    <DashboardLayout>
+      <div className="p-6">
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6 flex-wrap">
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-4 flex-wrap">
           <Link to="/" className="hover:text-primary transition-colors">Dashboard</Link>
-          <span>/</span>
+          <ChevronRight className="w-3 h-3" />
           <Link to={`/city/${city.id}`} className="hover:text-primary transition-colors">{city.name}</Link>
-          <span>/</span>
+          <ChevronRight className="w-3 h-3" />
           <span className="text-foreground">{ward.name}</span>
         </div>
 
         {/* Ward Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8"
+          className="flex flex-col xl:flex-row xl:items-start gap-5 mb-6"
         >
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-3 flex-1">
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => navigate(-1)}
-              className="mt-1"
+              className="h-8 w-8 mt-0.5"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-4 h-4" />
             </Button>
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl lg:text-4xl font-display font-bold text-foreground">
+              <div className="flex items-center gap-2 mb-1">
+                <h1 className="text-2xl font-display font-bold text-foreground tracking-tight">
                   {ward.name}
                 </h1>
                 <LiveIndicator />
               </div>
-              <div className="flex items-center gap-4 text-muted-foreground flex-wrap">
+              <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
                 <div className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
+                  <MapPin className="w-3.5 h-3.5" />
                   <span>{city.name}, {state.name}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Users className="w-4 h-4" />
-                  <span>{(ward.population / 1000).toFixed(0)}K residents</span>
+                  <Users className="w-3.5 h-3.5" />
+                  <span>{(ward.population / 1000).toFixed(0)}K</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Ruler className="w-4 h-4" />
+                  <Ruler className="w-3.5 h-3.5" />
                   <span>{ward.area} sq km</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-6 p-6 rounded-xl bg-card border border-border/50">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="widget-card p-4 flex items-center gap-4"
+          >
             <AQIGauge 
               value={ward.aqi} 
               category={ward.category}
-              size="md"
+              size="sm"
             />
-            <div className="space-y-2">
-              <AQIBadge category={ward.category} size="lg" />
-              <p className="text-sm text-muted-foreground">
-                Dominant: {ward.dominantSource}
+            <div className="space-y-1.5">
+              <AQIBadge category={ward.category} size="sm" />
+              <p className="text-xs text-muted-foreground">
+                Source: {ward.dominantSource}
               </p>
             </div>
-          </div>
+          </motion.div>
         </motion.div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
           {/* Left Column */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="xl:col-span-8 space-y-5">
             {/* Pollutant Cards */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="rounded-xl bg-card border border-border/50 p-6"
+              transition={{ delay: 0.05 }}
+              className="widget-card p-4"
             >
-              <div className="flex items-center gap-2 mb-4">
-                <Wind className="w-5 h-5 text-primary" />
-                <h2 className="font-display font-semibold text-foreground">Air Pollutants</h2>
+              <div className="flex items-center gap-2 mb-3">
+                <Wind className="w-4 h-4 text-primary" />
+                <h2 className="font-display font-semibold text-sm text-foreground">Air Pollutants</h2>
               </div>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                <PollutantCard 
-                  name="PM2.5" 
-                  value={ward.pollutants.pm25} 
-                  unit="µg/m³" 
-                  limit={pollutantLimits.pm25} 
-                />
-                <PollutantCard 
-                  name="PM10" 
-                  value={ward.pollutants.pm10} 
-                  unit="µg/m³" 
-                  limit={pollutantLimits.pm10} 
-                />
-                <PollutantCard 
-                  name="NO₂" 
-                  value={ward.pollutants.no2} 
-                  unit="µg/m³" 
-                  limit={pollutantLimits.no2} 
-                />
-                <PollutantCard 
-                  name="SO₂" 
-                  value={ward.pollutants.so2} 
-                  unit="µg/m³" 
-                  limit={pollutantLimits.so2} 
-                />
-                <PollutantCard 
-                  name="CO" 
-                  value={ward.pollutants.co} 
-                  unit="mg/m³" 
-                  limit={pollutantLimits.co} 
-                />
-                <PollutantCard 
-                  name="O₃" 
-                  value={ward.pollutants.o3} 
-                  unit="µg/m³" 
-                  limit={pollutantLimits.o3} 
-                />
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                <PollutantCard name="PM2.5" value={ward.pollutants.pm25} unit="µg/m³" limit={pollutantLimits.pm25} />
+                <PollutantCard name="PM10" value={ward.pollutants.pm10} unit="µg/m³" limit={pollutantLimits.pm10} />
+                <PollutantCard name="NO₂" value={ward.pollutants.no2} unit="µg/m³" limit={pollutantLimits.no2} />
+                <PollutantCard name="SO₂" value={ward.pollutants.so2} unit="µg/m³" limit={pollutantLimits.so2} />
+                <PollutantCard name="CO" value={ward.pollutants.co} unit="mg/m³" limit={pollutantLimits.co} />
+                <PollutantCard name="O₃" value={ward.pollutants.o3} unit="µg/m³" limit={pollutantLimits.o3} />
               </div>
             </motion.div>
 
             {/* Dominant Pollution Source */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="rounded-xl bg-card border border-border/50 p-6"
+              transition={{ delay: 0.1 }}
+              className="widget-card p-4"
             >
-              <div className="flex items-center gap-2 mb-4">
-                <Factory className="w-5 h-5 text-primary" />
-                <h2 className="font-display font-semibold text-foreground">Dominant Pollution Source</h2>
+              <div className="flex items-center gap-2 mb-3">
+                <Factory className="w-4 h-4 text-primary" />
+                <h2 className="font-display font-semibold text-sm text-foreground">Dominant Pollution Source</h2>
               </div>
               <div 
-                className="p-4 rounded-lg border-2 border-dashed"
-                style={{ borderColor: `${color}50`, backgroundColor: `${color}10` }}
+                className="p-3 rounded-md border border-dashed"
+                style={{ borderColor: `${color}40`, backgroundColor: `${color}08` }}
               >
                 <div className="flex items-center gap-3">
                   <div 
-                    className="p-3 rounded-full"
-                    style={{ backgroundColor: `${color}20` }}
+                    className="p-2 rounded-md"
+                    style={{ backgroundColor: `${color}15` }}
                   >
-                    {ward.dominantSource === 'Vehicular' && <Car className="w-6 h-6" style={{ color }} />}
-                    {ward.dominantSource === 'Industrial' && <Factory className="w-6 h-6" style={{ color }} />}
-                    {ward.dominantSource === 'Construction' && <Factory className="w-6 h-6" style={{ color }} />}
+                    {ward.dominantSource === 'Vehicular' && <Car className="w-5 h-5" style={{ color }} />}
+                    {ward.dominantSource === 'Industrial' && <Factory className="w-5 h-5" style={{ color }} />}
+                    {ward.dominantSource === 'Construction' && <Factory className="w-5 h-5" style={{ color }} />}
                     {!['Vehicular', 'Industrial', 'Construction'].includes(ward.dominantSource) && (
-                      <Wind className="w-6 h-6" style={{ color }} />
+                      <Wind className="w-5 h-5" style={{ color }} />
                     )}
                   </div>
                   <div>
-                    <h3 className="text-lg font-display font-semibold text-foreground">
+                    <h3 className="font-display font-semibold text-sm text-foreground">
                       {ward.dominantSource}
                     </h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       Primary contributor to local air pollution
                     </p>
                   </div>
@@ -252,30 +221,30 @@ const WardDetail = () => {
 
             {/* Action Recommendations */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="rounded-xl bg-card border border-border/50 p-6"
+              transition={{ delay: 0.15 }}
+              className="widget-card p-4"
             >
-              <div className="flex items-center gap-2 mb-4">
-                <Lightbulb className="w-5 h-5 text-primary" />
-                <h2 className="font-display font-semibold text-foreground">Recommended Actions</h2>
+              <div className="flex items-center gap-2 mb-3">
+                <Lightbulb className="w-4 h-4 text-primary" />
+                <h2 className="font-display font-semibold text-sm text-foreground">Recommended Actions</h2>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {recommendations.map((rec, index) => {
                   const Icon = rec.icon;
                   return (
                     <motion.div
                       key={index}
-                      initial={{ opacity: 0, x: -20 }}
+                      initial={{ opacity: 0, x: -12 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.1 * index }}
-                      className="flex items-start gap-3 p-3 rounded-lg bg-secondary/30"
+                      transition={{ delay: 0.05 * index }}
+                      className="flex items-start gap-2.5 p-2.5 rounded-md bg-secondary/20"
                     >
-                      <div className="p-2 rounded-lg bg-primary/10">
-                        <Icon className="w-4 h-4 text-primary" />
+                      <div className="p-1.5 rounded-md bg-primary/10">
+                        <Icon className="w-3.5 h-3.5 text-primary" />
                       </div>
-                      <p className="text-sm text-foreground">{rec.text}</p>
+                      <p className="text-xs text-foreground">{rec.text}</p>
                     </motion.div>
                   );
                 })}
@@ -284,59 +253,59 @@ const WardDetail = () => {
           </div>
 
           {/* Right Column */}
-          <div className="space-y-6">
+          <div className="xl:col-span-4 space-y-4">
             {/* Health Advisory */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 16 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.1 }}
             >
               <HealthAdvisoryCard category={ward.category} />
             </motion.div>
 
             {/* Comparison with City */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 16 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="rounded-xl bg-card border border-border/50 p-6"
+              transition={{ delay: 0.15 }}
+              className="widget-card p-4"
             >
-              <h3 className="font-display font-semibold text-foreground mb-4">Comparison with City</h3>
-              <div className="space-y-4">
+              <h3 className="font-display font-semibold text-sm text-foreground mb-3">City Comparison</h3>
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">{ward.name} AQI</span>
-                  <span className="text-lg font-bold" style={{ color: getAQIColor(ward.category) }}>
+                  <span className="text-xs text-muted-foreground">{ward.name}</span>
+                  <span className="text-base font-bold font-mono" style={{ color: getAQIColor(ward.category) }}>
                     {ward.aqi}
                   </span>
                 </div>
-                <div className="h-3 bg-muted rounded-full overflow-hidden relative">
+                <div className="h-2 bg-muted rounded-full overflow-hidden relative">
                   <motion.div
                     className="absolute h-full rounded-full"
                     style={{ backgroundColor: getAQIColor(ward.category) }}
                     initial={{ width: 0 }}
                     animate={{ width: `${Math.min((ward.aqi / 500) * 100, 100)}%` }}
-                    transition={{ duration: 1 }}
+                    transition={{ duration: 0.8 }}
                   />
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">{city.name} Avg AQI</span>
-                  <span className="text-lg font-bold" style={{ color: getAQIColor(city.category) }}>
+                  <span className="text-xs text-muted-foreground">{city.name} Avg</span>
+                  <span className="text-base font-bold font-mono" style={{ color: getAQIColor(city.category) }}>
                     {city.aqi}
                   </span>
                 </div>
-                <div className="h-3 bg-muted rounded-full overflow-hidden relative">
+                <div className="h-2 bg-muted rounded-full overflow-hidden relative">
                   <motion.div
                     className="absolute h-full rounded-full"
                     style={{ backgroundColor: getAQIColor(city.category) }}
                     initial={{ width: 0 }}
                     animate={{ width: `${Math.min((city.aqi / 500) * 100, 100)}%` }}
-                    transition={{ duration: 1, delay: 0.2 }}
+                    transition={{ duration: 0.8, delay: 0.1 }}
                   />
                 </div>
                 
                 <div className={cn(
-                  'text-sm p-3 rounded-lg',
+                  'text-xs p-2.5 rounded-md',
                   ward.aqi > city.aqi ? 'bg-danger/10 text-danger' : 'bg-success/10 text-success'
                 )}>
                   {ward.aqi > city.aqi 
@@ -349,22 +318,22 @@ const WardDetail = () => {
 
             {/* Quick Links */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 16 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-              className="rounded-xl bg-card border border-border/50 p-6"
+              transition={{ delay: 0.2 }}
+              className="widget-card p-4"
             >
-              <h3 className="font-display font-semibold text-foreground mb-4">Quick Links</h3>
-              <div className="space-y-2">
+              <h3 className="font-display font-semibold text-sm text-foreground mb-3">Quick Links</h3>
+              <div className="space-y-1.5">
                 <Link 
                   to={`/city/${city.id}`}
-                  className="block p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors text-sm text-foreground"
+                  className="block p-2.5 rounded-md bg-secondary/20 hover:bg-secondary/40 transition-colors text-xs text-foreground"
                 >
                   View all {city.name} wards →
                 </Link>
                 <Link 
                   to="/"
-                  className="block p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors text-sm text-foreground"
+                  className="block p-2.5 rounded-md bg-secondary/20 hover:bg-secondary/40 transition-colors text-xs text-foreground"
                 >
                   Back to national dashboard →
                 </Link>
@@ -372,8 +341,8 @@ const WardDetail = () => {
             </motion.div>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 };
 
