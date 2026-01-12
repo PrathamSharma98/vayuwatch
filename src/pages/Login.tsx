@@ -201,36 +201,39 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      {/* Subtle glow effect */}
+      <div className="fixed inset-0 bg-gradient-glow pointer-events-none" />
+      
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        className="w-full max-w-md relative z-10"
       >
         {/* Logo */}
-        <Link to="/" className="flex items-center justify-center gap-2 mb-8">
+        <Link to="/" className="flex items-center justify-center gap-2 mb-6">
           <motion.div
             initial={{ rotate: -180, opacity: 0 }}
             animate={{ rotate: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="p-3 rounded-xl bg-gradient-to-br from-primary to-accent"
+            className="p-2.5 rounded-lg bg-gradient-to-br from-primary to-primary/60 glow-primary"
           >
-            <Wind className="w-8 h-8 text-primary-foreground" />
+            <Wind className="w-6 h-6 text-primary-foreground" />
           </motion.div>
           <div>
-            <h1 className="font-display font-bold text-2xl text-foreground">
+            <h1 className="font-display font-bold text-xl text-foreground tracking-tight">
               VayuWatch
             </h1>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[10px] text-muted-foreground -mt-0.5">
               India Air Quality Monitor
             </p>
           </div>
         </Link>
 
         {/* Demo Mode Banner */}
-        <div className="mb-6 p-3 rounded-lg bg-info/10 border border-info/30 flex items-center gap-2">
-          <Smartphone className="w-4 h-4 text-info" />
-          <p className="text-sm text-info">
-            Demo Mode - OTP will be shown on screen
+        <div className="mb-5 py-2 px-3 rounded-md bg-info/10 border border-info/20 flex items-center gap-2">
+          <Smartphone className="w-3.5 h-3.5 text-info" />
+          <p className="text-xs text-info">
+            Demo Mode - OTP visible on screen
           </p>
         </div>
 
